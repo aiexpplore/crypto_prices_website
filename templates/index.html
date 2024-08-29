@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Prices</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Current Cryptocurrency Prices</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Cryptocurrency</th>
+                <th>Price (USD)</th>
+            </tr>
+        </thead>
+        <tbody id="crypto-prices">
+            {% for crypto, data in prices.items() %}
+            <tr>
+                <td>{{ crypto }}</td>
+                <td>${{ data['USD'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        async function fetchPrices() {
+            const response = await fetch('/api/prices');
+            const data = await response.json();
+            const tableBody = document.getElementById('crypto-prices');
+            tableBody.innerHTML = '';
+            for (const [crypto, info] of Object.entries(data)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${crypto}</td><td>$${info['USD']}</td>`;
+                tableBody.appendChild(row);
+            }
+        }
+        
+        setInterval(fetchPrices, 1000); // Update every 30 seconds
+        fetchPrices(); // Initial fetch
+    </script>
+</body>
+</html>
